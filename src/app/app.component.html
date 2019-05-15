@@ -1,0 +1,44 @@
+<div class="container">
+  <h1>{{ name }}</h1>
+
+    <!-- <button type="button" class="btn btn-outline-success" (click)="start()">Iniciar cámara</button> -->
+
+    <div>
+
+      <div [ngClass]="{'videoHidden': !videoActive }" class="video-container">
+        <img src="https://files.slack.com/files-pri/T40Q8GYV7-FJD3VCQ1H/prueba_id.png" alt="" class="overlay">
+        <video #videoElement playsinline class="videocanvas"></video>
+      </div>
+      
+      <button (click)="captureFront()" class="btn btn-primary">Capturar Frontal</button>
+
+      <button (click)="captureBack()" class="btn btn-warning">Capturar Trasera</button>
+
+      <ng-container>
+        <h2 *ngIf="capturedFrontImage">Imagen Frontal</h2>
+        <img *ngIf="capturedFrontImage" class="capturedImage" [src]="capturedFrontImage" />
+        <h2 *ngIf="capturedBackImage">Imagen Trasera</h2>
+        <img *ngIf="capturedBackImage" class="capturedImage" [src]="capturedBackImage" />
+      </ng-container>
+
+      <ng-container *ngIf="optimizedRequest">
+        <h3>Optimized Request</h3>
+        <pre><code>{{ optimizedRequest | json }}</code></pre>
+        <div class="alert alert-success" role="alert">
+          Aprox. request size: {{ optimizedRequestSize }} KB
+        </div>
+
+        <div class="card-deck">
+          <div class="card">
+            <img class="card-img-top" src="{{ optimizedFrontImage }}" alt="">
+          </div>
+          <div class="card">
+            <img class="card-img-top" src="{{ optimizedBackImage }}" alt="">
+          </div>
+        </div>
+        <hr>
+      </ng-container>
+
+    </div>
+
+</div>
