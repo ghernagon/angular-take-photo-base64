@@ -9,7 +9,9 @@ import { ViewChild } from '@angular/core';
 export class AppComponent  {
   name = ' Tomar foto usando webcam y generar base64';
   
+  @ViewChild('videoContainer') videoContainer: ElementRef;
   @ViewChild('videoElement') videoElement: any;
+  @ViewChild('overlayImg') overlayImg: ElementRef;
   video: any;
   videoActive: Boolean;
   capturedFrontImage: any;
@@ -30,9 +32,7 @@ export class AppComponent  {
     // REAR CAMERA
     this.initCamera({ 
       video: { 
-        facingMode: "environment",
-        width: { max: 1280 },
-        height: { max: 720 }
+        facingMode: "environment"
       },
       audio: false 
       });
@@ -126,34 +126,94 @@ export class AppComponent  {
   }
 
   resizeImage(video, width, height, quality, callback) {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width  = width;
-    canvas.height = height;
+    // const canvas = document.createElement('canvas');
+    // const ctx = canvas.getContext('2d');
+    // canvas.width  = width;
+    // canvas.height = height;
 
-    let xStart = 0;
-    let yStart = 0;
-    let newWidth = 0;
-    let newHeight = 0;
+    // let xStart = 0;
+    // let yStart = 0;
+    // let newWidth = 0;
+    // let newHeight = 0;
 
-    let aspectRadio = video.videoHeight / video.videoWidth;
+    // let aspectRadio = video.videoHeight / video.videoWidth;
 
-      if (video.videoHeight > video.videoWidth) {
-        // horizontal
-        aspectRadio = video.videoWidth / video.videoHeight;
-        newHeight = height;
-        newWidth = aspectRadio * height;
-        xStart = -(newWidth - width) / 2;
+    //   if (video.videoHeight > video.videoWidth) {
+    //     // horizontal
+    //     aspectRadio = video.videoWidth / video.videoHeight;
+    //     newHeight = height;
+    //     newWidth = aspectRadio * height;
+    //     xStart = -(newWidth - width) / 2;
+    //   } else {
+    //     // vertical
+    //     newWidth = width;
+    //     newHeight = aspectRadio * width;
+    //     yStart = -(newHeight - height) / 2;
+    //   }
+
+    // let overlayBox = this.overlayImg.nativeElement;
+    // let containerTop = this.videoContainer.nativeElement.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
+    // let overlayTop = overlayBox.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
+
+    // // ctx.drawImage(video, xStart, yStart, newWidth, newHeight);
+    // // ctx.drawImage(video, overlayBox.getBoundingClientRect().x, overlayTop - containerTop, 500, 500, 0, 0, 600, 600);
+
+    // callback(canvas.toDataURL('image/jpeg', quality / 100));
+
+
+      let canvas   = document.createElement("canvas"),
+          ctx      = canvas.getContext('2d'),
+          xStart   = 0,
+          yStart   = 0,
+          aspectRadio,
+          newWidth,
+          newHeight;
+
+      ctx.save();
+      ctx.beginPath();
+
+      canvas.width  = width;
+      canvas.height = height;
+
+      aspectRadio = video.videoHeight / video.videoWidth;
+
+      if(video.videoHeight > video.videoWidth) { // OR < for 4:3 photo
+         //horizontal
+         aspectRadio = video.videoWidth / video.videoHeight;
+         newHeight   = height,
+         newWidth    = aspectRadio * height;
+         xStart      = -(newWidth - width) / 2;
       } else {
-        // vertical
-        newWidth = width;
-        newHeight = aspectRadio * width;
-        yStart = -(newHeight - height) / 2;
+         //vertical
+         newWidth  = width,
+         newHeight = aspectRadio * width;
+         yStart    = -(newHeight - height) / 2;
       }
 
-    ctx.drawImage(video, xStart, yStart, newWidth, newHeight);
+      ctx.fillStyle = 'green';
+      ctx.rect(0, 0, width, height);
+      ctx.fill();
+      ctx.closePath();
+      ctx.drawImage(video, xStart, yStart, newWidth, newHeight);
+    
+      // let overlayBox = this.overlayImg.nativeElement.getBoundingClientRect();
+      // ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
 
-    callback(canvas.toDataURL('image/jpeg', quality / 100));
+      // canvas = this.cropCanvas(canvas, 250, 250, width, height);
+      // ctx = canvas.getContext('2d');
+
+      callback(canvas.toDataURL('image/jpeg', quality / 100));
+  }
+
+  cropCanvas(sourceCanvas,left,top,width,height) {
+    let destCanvas = document.createElement('canvas');
+    destCanvas.width = width;
+    destCanvas.height = height;
+    destCanvas.getContext('2d').drawImage(
+        sourceCanvas,
+        left,top,width,height,  // source rect with content to crop
+        0,0,width,height);      // newCanvas, same size as source rect
+    return destCanvas;
   }
 
   generateOptimizedRequest() {
