@@ -108,7 +108,7 @@ export class AppComponent  {
   }
 
   captureFront() {
-    this.resizeImage(this.video, 1280, 720, 70, (base64) => {
+    this.resizeImage(this.video, 1432, 914, 70, (base64) => {
       this.capturedFrontImage = base64;
       this.generateOptimizedRequest();
     });
@@ -117,7 +117,7 @@ export class AppComponent  {
   }
 
   captureBack() {
-    this.resizeImage(this.video, 1280, 720, 70, (base64) => {
+    this.resizeImage(this.video, 1432, 914, 70, (base64) => {
       this.capturedBackImage = base64;
       this.generateOptimizedRequest();
     });
