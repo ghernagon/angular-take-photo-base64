@@ -190,7 +190,7 @@ export class AppComponent  {
          yStart    = -(newHeight - height) / 2;
       }
 
-      ctx.fillStyle = 'green';
+      ctx.fillStyle = 'purple';
       ctx.rect(0, 0, width, height);
       ctx.fill();
       ctx.closePath();
